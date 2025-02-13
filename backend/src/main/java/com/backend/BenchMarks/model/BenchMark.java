@@ -3,28 +3,47 @@ package com.backend.BenchMarks.model;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.backend.BenchMarks.model.dto.ResultadoDTO;
+import com.backend.BenchMarks.model.enums.TipoLocalidade;
+
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
+@Entity
+@Table(name="benchmark")
 public class BenchMark {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome; // Nome opcional para identificar o benchmark
+    @NotNull(message = "O campo nome não pode ser vazio.")
+    private String nome;
 
-    private String pais1; // País/Região 1
+    @NotNull(message = "O campo localidade 1 não pode ser vazio.")
+    private String localidade1;
 
-    private String pais2; // País/Região 2
+    @NotNull(message = "O campo localidade 2 não pode ser vazio.")
+    private String localidade2;
 
-    private LocalDate dataInicial; // Data inicial do período
+    @NotNull(message = "O campo data inicial não pode ser vazio.")
+    private LocalDate dataInicial;
     
-    private LocalDate dataFinal; // Data final do período
+    @NotNull(message = "O campo data final não pode ser vazio.")
+    private LocalDate dataFinal;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "benchmark")
-    private List<Resultado> resultados; // Lista de resultados associados
+    private List<ResultadoDTO> resultados;
+
+    @NotNull(message = "É obrigatório identificar qual o tipo de localidade.")
+    TipoLocalidade tipoLocalidade;
 }
+

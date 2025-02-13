@@ -1,0 +1,15 @@
+<div class="container mx-auto p-4">
+  <app-menu-categories></app-menu-categories>
+
+  <header class="text-center my-8">
+    <h1 class="text-3xl font-bold mb-4">Dashboard COVID-19 Brasil</h1>
+    <p class="text-gray-600">
+      Monitoramento em tempo real dos casos de COVID-19 no Brasil,
+      utilizando dados oficiais fornecidos pela API Brasil.io
+    </p>
+  </header>
+
+  <app-bench-mark (searchEvent)="onSearch($event)"></app-bench-mark>
+  <app-grafico [data]="chartData"></app-grafico>
+  <!-- importar tambem o resultado -->
+</div>

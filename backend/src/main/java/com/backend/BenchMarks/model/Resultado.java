@@ -2,32 +2,30 @@ package com.backend.BenchMarks.model;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
-@Entity
 public class Resultado {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    
+    private LocalDate date; // Data do registro
 
-    private LocalDate data; // Data do registro
+    private String state; // Estado (UF)
 
-    private String pais; // País/Região
+    private String city; // Município
 
-    private Integer casosConfirmados; // Número de casos confirmados
+    private String placeType; // Tipo de local (city ou state)
 
-    private Integer mortes; // Número de mortes
+    private Integer confirmed; // Número de casos confirmados
 
-    private Double taxaLetalidade; // Taxa de letalidade (mortes / casos confirmados)
+    private Integer deaths; // Número de mortes
 
-    @ManyToOne
-    @JoinColumn(name = "benchmark_id")
-    private BenchMark benchmark; // Relacionamento com o Benchmark
+    private Boolean isLast; // É a última atualização?
+
+    private Long estimatedPopulation; // População estimada
+
+    private String cityIbgeCode; // Código IBGE do município
+
+    private Double confirmedPer100kInhabitants; // Confirmados por 100k habitantes
+    
+    private Double deathRate; // Taxa de mortalidade (mortes/confirmados)
 }

@@ -1,1 +1,8 @@
-<p>grafico works!</p>
+<div class="bg-white rounded-lg shadow-sm p-6">
+  <h2 class="text-xl font-semibold mb-4">Evolução de Casos</h2>
+  <canvas baseChart
+    [data]="chartData"
+    [options]="chartOptions"
+    [type]="'line'">
+  </canvas>
+</div>

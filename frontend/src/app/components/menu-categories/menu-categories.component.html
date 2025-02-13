@@ -1,1 +1,11 @@
-<p>menu-categories works!</p>
+<nav class="bg-white shadow-sm rounded-lg p-4 mb-8">
+  <ul class="flex space-x-6">
+    <li *ngFor="let category of categories">
+      <button
+        class="text-gray-600 hover:text-blue-600 font-medium"
+        (click)="selectCategory(category)">
+        {{ category }}
+      </button>
+    </li>
+  </ul>
+</nav>

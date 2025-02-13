@@ -1,5 +1,6 @@
 import { ID } from "@datorama/akita";
 import { Resultado } from "./Resultado";
+import { TipoLocalidade } from "./enum/TipoLocalidade";
 
 export class BenchMark {
   id: ID | undefined;
@@ -9,6 +10,7 @@ export class BenchMark {
   dataInicial: Date;
   dataFinal: Date;
   resultados: Resultado[] = [];
+  tipoLocalidade: TipoLocalidade;
 
   constructor(
     id: | undefined = undefined,
@@ -18,6 +20,7 @@ export class BenchMark {
     dataInicial: Date = new Date(),
     dataFinal: Date = new Date(),
     resultados: Resultado[] = [],
+    tipoLocalidade: TipoLocalidade,
   ) {
     this.id = id;
     this.nome = nome;
@@ -26,6 +29,7 @@ export class BenchMark {
     this.dataInicial = dataInicial;
     this.dataFinal = dataFinal;
     this.resultados = resultados;
+    this.tipoLocalidade = tipoLocalidade;
   }
 
 }

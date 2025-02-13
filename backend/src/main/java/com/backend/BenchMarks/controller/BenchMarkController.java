@@ -25,5 +25,7 @@ public class BenchMarkController extends GenericController<BenchMark>{
     protected BenchMarkController(GenericService<BenchMark> genericService) {
         super(genericService);
     }
+    
+
 
 }
