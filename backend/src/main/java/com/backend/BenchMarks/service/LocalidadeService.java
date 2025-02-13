@@ -9,40 +9,50 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.backend.BenchMarks.handler.RegistroNotFoundException;
 import com.backend.BenchMarks.model.Estado;
+import com.backend.BenchMarks.model.Localidade;
 import com.backend.BenchMarks.model.Municipio;
 import com.backend.BenchMarks.repository.EstadoRepository;
+import com.backend.BenchMarks.repository.LocalidadeRepository;
 import com.backend.BenchMarks.repository.MunicipioRepository;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
+@Service
 public class LocalidadeService {
     private final String API_URL;
     private final String API_TOKEN;
     private final RestTemplate restTemplate;
-    private final EstadoRepository estadoRepository;
-    private final MunicipioRepository municipioRepository;
 
-    public LocalidadeService(RestTemplate restTemplate, Dotenv dotenv,
-                             EstadoRepository estadoRepository, MunicipioRepository municipioRepository) {
+    @Autowired
+    private EstadoRepository estadoRepository;
+
+    @Autowired
+    private MunicipioRepository municipioRepository;
+
+    @Autowired
+    private LocalidadeRepository localidadeRepository;
+
+
+    public LocalidadeService(RestTemplate restTemplate, Dotenv dotenv) {
         this.restTemplate = restTemplate;
         this.API_TOKEN = dotenv.get("API_TOKEN");
         this.API_URL = dotenv.get("API_URL");
-        this.estadoRepository = estadoRepository;
-        this.municipioRepository = municipioRepository;
+
     }
 
 
-    public void carregarEstadosEMunicipios() {
+    public void carregarEstadosEMunicipios() { //implementar businessexception
         Set<String> estados = buscarEstadosDaAPI();
-
         for (String sigla : estados) {
             Optional<Estado> estadoExistente = estadoRepository.findBySigla(sigla);
             Estado estado = estadoExistente.orElseGet(() -> {
@@ -50,13 +60,13 @@ public class LocalidadeService {
                 novoEstado.setSigla(sigla);
                 return estadoRepository.save(novoEstado);
             });
-
+    
             buscarEMunicipiosSalvar(estado);
         }
     }
 
 
-    private Set<String> buscarEstadosDaAPI() {
+    private Set<String> buscarEstadosDaAPI() { //implementar businessexception
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Token " + API_TOKEN);
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -99,6 +109,26 @@ public class LocalidadeService {
                 })
                 .collect(Collectors.toList());
 
-        municipioRepository.saveAll(municipios);
+        municipioRepository.saveAll(municipios); //implementar businessexception
+    }
+
+    public List<Estado> getEstadosJaCadastrados(){
+        List<Estado> estados = estadoRepository.findAll();
+        if (estados.isEmpty()) {
+            throw new RegistroNotFoundException("Nenhum estado encontrado no banco de dados.");
+        }
+        return estados;
+    }
+
+    public List<Municipio> getMunicipiosJaCadastrados(){
+        List<Municipio> municipios = municipioRepository.findAll();
+        if (municipios.isEmpty()) {
+            throw new RegistroNotFoundException("Nenhum municipio encontrado no banco de dados.");
+        }
+        return municipios;
+    }
+
+    public Localidade buscarPorId(Long id) {
+        return localidadeRepository.findById(id).orElseThrow(() -> new RegistroNotFoundException(id));
     }
 }

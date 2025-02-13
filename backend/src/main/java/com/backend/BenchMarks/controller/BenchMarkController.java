@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Controller
 @Validated
 @RestController
-@RequestMapping("/benchmark")
+@RequestMapping("/api/benchmark")
 @Tag(name = "BenchMark", description = "Operações relacionadas aos benchmarks")
 public class BenchMarkController extends GenericController<BenchMark>{
 

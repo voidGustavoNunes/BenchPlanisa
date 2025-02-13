@@ -1,9 +1,8 @@
 package com.backend.BenchMarks.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -14,14 +13,11 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name="municipio")
-public class Municipio {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Municipio extends Localidade{
 
     @NotNull(message = "O campo nome é obrigatório")
     @Size(min = 3, max = 1000, message = "O campo nome deve ter entre 3 e 1000 caracteres")
+    @Column(unique = true)
     private String nome;
 
     @ManyToOne

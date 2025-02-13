@@ -1,6 +1,8 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { MatDialog } from "@angular/material/dialog";
+import { AlertaComponent } from "./alerta/alerta.component";
 
 @Injectable({
   providedIn: 'root'

@@ -3,7 +3,7 @@ import { Resultado } from "./Resultado";
 import { TipoLocalidade } from "./enum/TipoLocalidade";
 
 export class BenchMark {
-  id: ID | undefined;
+  id: ID;
   nome: string;
   pais1: string;
   pais2: string;
@@ -13,7 +13,7 @@ export class BenchMark {
   tipoLocalidade: TipoLocalidade;
 
   constructor(
-    id: | undefined = undefined,
+    id: ID,
     nome: string = '',
     pais1: string = '',
     pais2: string = '',

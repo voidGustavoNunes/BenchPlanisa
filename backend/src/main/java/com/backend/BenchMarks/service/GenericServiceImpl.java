@@ -6,7 +6,7 @@ import java.lang.reflect.Field;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.backend.BenchMarks.util.RegistroNotFoundException;
+import com.backend.BenchMarks.handler.RegistroNotFoundException;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -43,6 +43,7 @@ public abstract class GenericServiceImpl<T, R extends JpaRepository<T, Long>> im
 
     @Override
     public T atualizar(@NotNull @Positive Long id, @Valid @NotNull T entityAtualizada) {
+        this.saveValidation(entityAtualizada);
         T entityExistente = repository.findById(id)
                 .orElseThrow(() -> new RegistroNotFoundException(id));
         

@@ -6,10 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./menu-categories.component.scss']
 })
 export class MenuCategoriesComponent {
-  categories = [
-    'Página Inicial',
-    'Tabela de BenchMark',
-    'Sobre'
+  menuItems = [
+    { name: 'Página Inicial', route: '/home' },
+    { name: 'Tabela de BenchMark', route: '/tabela' },
+    { name: 'Sobre', route: '/sobre' }
   ];
 
   selectCategory(category: string) {

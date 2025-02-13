@@ -2,10 +2,11 @@ package com.backend.BenchMarks.service;
 
 import java.util.List;
 
+import com.backend.BenchMarks.handler.RegistroNotFoundException;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import com.backend.BenchMarks.util.RegistroNotFoundException;
 public interface GenericService<T> {
 
     List<T> listar();

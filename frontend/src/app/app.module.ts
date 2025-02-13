@@ -16,12 +16,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
 import { ResultadoComponent } from './components/resultado/resultado.component';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SobreComponent } from './components/sobre/sobre.component';
+import { AlertaComponent } from './components/base/alerta/alerta.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,8 @@ import { SobreComponent } from './components/sobre/sobre.component';
     TabelaComponent,
     HomeComponent,
     ResultadoComponent,
-    SobreComponent
+    SobreComponent,
+    AlertaComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +55,11 @@ import { SobreComponent } from './components/sobre/sobre.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatTableModule
+    MatTableModule,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDialogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -2,7 +2,7 @@ import { BenchMark } from './BenchMark';
 import { ID } from "@datorama/akita";
 
 export class Resultado {
-  id: ID | undefined;
+  id: ID;
   data: Date;
   pais: string;
   casosConfirmados: number;
@@ -11,13 +11,13 @@ export class Resultado {
   benchMark: BenchMark | undefined;
 
   constructor(
-    id: ID | undefined = undefined,
+    id: ID,
     data: Date = new Date(),
     pais: string = '',
     casosConfirmados: number = 0,
     mortes: number = 0,
     taxaLetalidade: number = 0,
-    benchMark: BenchMark | undefined = undefined,
+    benchMark: BenchMark,
   ) {
     this.id = id;
     this.data = data;

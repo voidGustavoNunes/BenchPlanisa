@@ -1,4 +1,4 @@
-package com.backend.BenchMarks.util;
+package com.backend.BenchMarks.handler;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

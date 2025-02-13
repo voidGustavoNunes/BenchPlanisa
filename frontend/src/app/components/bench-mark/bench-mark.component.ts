@@ -1,22 +1,30 @@
-import { Component} from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { BenchMarkService } from '../../service/BenchMarkService';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { TipoLocalidade } from 'src/app/modules/enum/TipoLocalidade';
+import { map, Observable, startWith, switchMap } from 'rxjs';
+import { Estado } from 'src/app/modules/Estado';
+import { Municipio } from 'src/app/modules/Municipio';
+import { LocalidadeService } from 'src/app/service/LocalidadeService';
 
 @Component({
   selector: 'app-bench-mark',
   templateUrl: './bench-mark.component.html',
   styleUrls: ['./bench-mark.component.scss']
 })
-export class BenchMarkComponent {
+export class BenchMarkComponent implements OnInit {
 
   benchmarkForm: FormGroup;
   comparisonData: any[] = [];
+  tipoLocalidade = TipoLocalidade;
+  filteredOptions$: Observable<(Estado | Municipio)[]> = new Observable();
 
   constructor(
     private fb: FormBuilder,
     private benchmarkService: BenchMarkService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private localidadeService: LocalidadeService
   ) {
     this.benchmarkForm = this.fb.group({
       name: ['', Validators.required],
@@ -26,6 +34,13 @@ export class BenchMarkComponent {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required]
     });
+  }
+  
+  ngOnInit(): void {
+    this.filteredOptions$ = this.benchmarkForm.get('location1')!.valueChanges.pipe(
+      startWith(''),
+      switchMap(value => this.buscarLocalidades(value))
+    );
   }
 
   onSubmit() {
@@ -48,6 +63,10 @@ export class BenchMarkComponent {
     }
   }
 
+  getTipoLocalidadeValues(): string[] {
+    return Object.values(this.tipoLocalidade);
+  }
+
   private loadComparisonData() {
     const formValue = this.benchmarkForm.value;
 
@@ -68,4 +87,22 @@ export class BenchMarkComponent {
       }
     });
   }
+
+  buscarLocalidades(query: string): Observable<(Estado | Municipio)[]> {
+    if (!query || query.length < 2) return new Observable(obs => obs.next([]));
+
+    return this.benchmarkForm.get('locationType')!.value === 'Estado'
+      ? this.localidadeService.getEstados().pipe(
+          map(estados => estados.filter(e => e.sigla.toLowerCase().includes(query.toLowerCase())))
+        )
+      : this.localidadeService.getMunicipios().pipe(
+          map(municipios => municipios.filter(m => m.nome.toLowerCase().includes(query.toLowerCase())))
+        );
+  }
+
+  exibirNome(option: Estado | Municipio): string {
+    return 'sigla' in option ? option.sigla : option.nome;
+  }
+
+
 }
