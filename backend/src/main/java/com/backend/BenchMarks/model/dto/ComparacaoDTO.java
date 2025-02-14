@@ -28,6 +28,6 @@ public class ComparacaoDTO {
     @JoinColumn(name = "benchmark_id")
     private BenchMark benchmark;
     
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comparacao")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "comparacao", orphanRemoval = true)
     private List<Comparacao> dadosComparacao;
 }

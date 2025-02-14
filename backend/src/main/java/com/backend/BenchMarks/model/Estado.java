@@ -22,7 +22,7 @@ public class Estado extends Localidade {
     @Column(unique = true)
     private String sigla;
 
-    @OneToMany(mappedBy = "estado", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "estado", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Municipio> municipios;
     
 }

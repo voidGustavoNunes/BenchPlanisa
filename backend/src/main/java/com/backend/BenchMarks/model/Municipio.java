@@ -6,13 +6,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name="municipio")
+@Table(name = "municipio", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"estado_id", "nome"}) // Nome deve ser único dentro do estado
+})
 public class Municipio extends Localidade{
 
     @NotNull(message = "O campo nome é obrigatório")

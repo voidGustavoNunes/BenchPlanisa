@@ -51,65 +51,80 @@ public class LocalidadeService {
     }
 
 
-    public void carregarEstadosEMunicipios() { //implementar businessexception
-        Set<String> estados = buscarEstadosDaAPI();
-        for (String sigla : estados) {
-            Optional<Estado> estadoExistente = estadoRepository.findBySigla(sigla);
-            Estado estado = estadoExistente.orElseGet(() -> {
-                Estado novoEstado = new Estado();
-                novoEstado.setSigla(sigla);
-                return estadoRepository.save(novoEstado);
-            });
+    public void carregarEstadosEMunicipios() { //implementar business exception
+        Set<Estado> estados = buscarEstadosDaAPI();
     
-            buscarEMunicipiosSalvar(estado);
+        for (Estado estado : estados) {
+            Optional<Estado> estadoExistente = estadoRepository.findBySigla(estado.getSigla());
+    
+            Estado estadoSalvo = estadoExistente.orElseGet(() -> estadoRepository.save(estado));
+    
+            buscarEMunicipiosSalvar(estadoSalvo);
         }
     }
+    
 
 
-    private Set<String> buscarEstadosDaAPI() { //implementar businessexception
+    private Set<Estado> buscarEstadosDaAPI() { //implementar business exception
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Token " + API_TOKEN);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-
+    
         ResponseEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.GET, entity, String.class);
         JsonObject jsonResponse = JsonParser.parseString(response.getBody()).getAsJsonObject();
         JsonArray results = jsonResponse.getAsJsonArray("results");
-
-        Set<String> estados = new HashSet<>();
-
+    
+        Set<Estado> estados = new HashSet<>();
+    
         for (int i = 0; i < results.size(); i++) {
             JsonObject item = results.get(i).getAsJsonObject();
             String estadoSigla = item.get("state").getAsString();
-            estados.add(estadoSigla);
+            String codigoIbge = item.has("city_ibge_code") ? item.get("city_ibge_code").getAsString() : null;
+    
+            Optional<Estado> estadoExistente = estadoRepository.findBySigla(estadoSigla);
+    
+            Estado estado = estadoExistente.orElseGet(() -> {
+                Estado novoEstado = new Estado();
+                novoEstado.setSigla(estadoSigla);
+                novoEstado.setCodigoIbge(codigoIbge);
+                return estadoRepository.save(novoEstado);
+            });
+    
+            estados.add(estado);
         }
-
+    
         return estados;
     }
+    
 
 
     private void buscarEMunicipiosSalvar(Estado estado) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Token " + API_TOKEN);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-
+    
         String url = API_URL + "?state=" + estado.getSigla();
         ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-
+    
         JsonObject jsonResponse = JsonParser.parseString(response.getBody()).getAsJsonObject();
         JsonArray results = jsonResponse.getAsJsonArray("results");
-
+    
         List<Municipio> municipios = results.asList().stream()
-                .map(m -> m.getAsJsonObject().get("city").getAsString())
-                .distinct()
-                .map(nome -> {
+                .map(m -> {
+                    JsonObject municipioJson = m.getAsJsonObject();
+                    String nome = municipioJson.get("city").getAsString();
+                    String codigoIbge = municipioJson.get("city_ibge_code").getAsString(); 
+    
                     Municipio municipio = new Municipio();
                     municipio.setNome(nome);
+                    municipio.setCodigoIbge(codigoIbge); 
                     municipio.setEstado(estado);
                     return municipio;
                 })
+                .distinct() 
                 .collect(Collectors.toList());
-
-        municipioRepository.saveAll(municipios); //implementar businessexception
+    
+        municipioRepository.saveAll(municipios); // implementar businnes exception
     }
 
     public List<Estado> getEstadosJaCadastrados(){

@@ -15,10 +15,17 @@ import com.backend.BenchMarks.model.Municipio;
 import com.backend.BenchMarks.service.LocalidadeService;
 
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.http.HttpStatus;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
+
+@Controller
+@Validated
 @RestController
 @RequestMapping("/api/localidade")
+@Tag(name = "Localidades", description = "Operações relacionadas as localidades")
 public class LocalidadeController {
 
     @Autowired 
@@ -28,14 +35,14 @@ public class LocalidadeController {
     @Operation(summary = "Popula os estados e os municípios", description = "Salva os estados e os municípios no banco de dados com os dados da API")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/popular-banco")
-    public void popularEstadosEMunicipios(){
+    public void popularEstadosEMunicipios(){ //implementar businessexception
         localidadeService.carregarEstadosEMunicipios();
     }
 
     @Operation(summary = "Retorna todos os estados", description = "Retorna todos os estados cadastrados no banco de dados")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/estados")
-    public List<Estado> getEstados() {
+    public List<Estado> getEstados() { 
         List<Estado> estados = localidadeService.getEstadosJaCadastrados();
         if (estados.isEmpty()) {
             throw new RegistroNotFoundException("Nenhum estado encontrado no banco de dados.");
@@ -54,18 +61,4 @@ public class LocalidadeController {
         return municipios;
     }
 
-
-
-    // //verificar se vou usar
-    // @GetMapping("/municipios/{sigla}")
-    // public List<Municipio> getMunicipios(@PathVariable String sigla) {
-    //     Estado estado = estadoRepository.findBySigla(sigla)
-    //             .orElseThrow(() -> new RegistroNotFoundException("Estado com sigla '" + sigla + "' não encontrado."));
-
-    //     List<Municipio> municipios = municipioRepository.findByEstado_Sigla(sigla);
-    //     if (municipios.isEmpty()) {
-    //         throw new RegistroNotFoundException("Nenhum município encontrado para o estado: " + sigla);
-    //     }
-    //     return municipios;
-    // }
 }

@@ -17,6 +17,7 @@ import lombok.Data;
 @Entity
 @Table(name = "dados_comparacao")
 public class Comparacao {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,6 +47,6 @@ public class Comparacao {
     private Double diferencaCasosPor100kHab;
     
     @ManyToOne
-    @JoinColumn(name = "comparacao_id")
+    @JoinColumn(name = "comparacao_dto_id", nullable = false)
     private ComparacaoDTO comparacao;
 }

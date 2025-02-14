@@ -3,7 +3,7 @@ package com.backend.BenchMarks.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.backend.BenchMarks.handler.RegistroNotFoundException;
+import com.backend.BenchMarks.handler.BusinessException;
 import com.backend.BenchMarks.model.BenchMark;
 import com.backend.BenchMarks.model.dto.ComparacaoDTO;
 import com.backend.BenchMarks.repository.BenchMarkRepository;
@@ -14,7 +14,7 @@ public class BenchMarkService extends GenericServiceImpl<BenchMark, BenchMarkRep
     @Autowired
     private LocalidadeService localidadeService;
 
-    @Autowired 
+    @Autowired
     private ComparadorService comparadorService;
 
     protected BenchMarkService(BenchMarkRepository repository) {
@@ -22,8 +22,10 @@ public class BenchMarkService extends GenericServiceImpl<BenchMark, BenchMarkRep
     }
     
     @Override
-    public void saveValidation(BenchMark entity) throws RegistroNotFoundException {
-        
+    public void saveValidation(BenchMark entity) throws BusinessException {
+        if (!entity.getDataFinal().isAfter(entity.getDataInicial())) {
+            throw new BusinessException("A data inicial deve ser maior que a data final no cadastro da benchmark de id: ." + entity.getId());
+        }
     }
 
     @Override
@@ -43,6 +45,8 @@ public class BenchMarkService extends GenericServiceImpl<BenchMark, BenchMarkRep
         return repository.save(benchMark);
     }
 
+
+    //testar atualizar
 
 
 

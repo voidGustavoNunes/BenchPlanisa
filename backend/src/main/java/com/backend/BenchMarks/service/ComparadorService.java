@@ -78,6 +78,7 @@ public class ComparadorService {
         dados.setComparacao(comparacao);
 
         // Dados da primeira localidade
+        dados.setIdentificadorLocalidade1(r1.getCityIbgeCode());
         dados.setConfirmados1(r1.getConfirmed());
         dados.setMortes1(r1.getDeaths());
         dados.setTaxaLetalidade1(r1.getDeathRate());
@@ -85,6 +86,7 @@ public class ComparadorService {
         dados.setCasosPor100kHab1(r1.getConfirmedPer100kInhabitants());
 
         // Dados da segunda localidade
+        dados.setIdentificadorLocalidade2(r2.getCityIbgeCode());
         dados.setConfirmados2(r2.getConfirmed());
         dados.setMortes2(r2.getDeaths());
         dados.setTaxaLetalidade2(r2.getDeathRate());
@@ -101,7 +103,7 @@ public class ComparadorService {
         return dados;
     }
 
-    public List<ComparacaoDTO> buscarComparacoes() {
+    public List<ComparacaoDTO> buscarComparacoesCadastradas() {
         return comparacaoRepository.findAll();
     }
 

@@ -8,10 +8,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import lombok.Data;
+import jakarta.persistence.Table;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Data
+@Table(name = "localidade")
 public abstract class Localidade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

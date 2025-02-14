@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class APIResponse {
+    
     private Integer count;
 
     private String next;

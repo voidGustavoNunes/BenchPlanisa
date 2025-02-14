@@ -9,7 +9,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 public class EnvConfig {
 
     @Bean
-    private Dotenv dotenv() {
+    public Dotenv dotenv() {
         return Dotenv.load();
     }
     

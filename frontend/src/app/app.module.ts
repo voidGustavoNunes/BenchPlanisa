@@ -53,7 +53,6 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatCardModule,
     MatButtonModule,
     BrowserModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
     MatTableModule,
     MatAutocompleteModule,

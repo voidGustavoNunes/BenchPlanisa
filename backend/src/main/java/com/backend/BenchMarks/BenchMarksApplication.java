@@ -2,10 +2,15 @@ package com.backend.BenchMarks;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
+@EntityScan({
+    "com.backend.BenchMarks.model",
+    "com.backend.BenchMarks.model.dto" 
+})
 public class BenchMarksApplication {
 
 	public static void main(String[] args) {

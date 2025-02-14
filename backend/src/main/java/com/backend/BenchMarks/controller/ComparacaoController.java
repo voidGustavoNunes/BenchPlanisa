@@ -27,8 +27,8 @@ public class ComparacaoController {
     
 
     @GetMapping("/all")
-    public List<ComparacaoDTO> getAllComparacoes() {
-        return comparadorService.buscarComparacoes();
+    public List<ComparacaoDTO> getAllComparacoes() { //implementar businessexception
+        return comparadorService.buscarComparacoesCadastradas();
     }
 
 }
