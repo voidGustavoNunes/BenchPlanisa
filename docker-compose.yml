@@ -32,14 +32,18 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
+      - "5005:5005"
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     env_file: .env
     volumes:
-      - backend_data:/app
-      - ./.env:/app/.env
+      - ./backend:/app  # Monta o código-fonte no contêiner para refletir mudanças sem rebuild
+      - ./.env:/app/.env  # Agora o .env é montado corretamente no backend
+      - /app/target  # Evita que arquivos compilados gerem conflitos
+    command: ./mvnw spring-boot:run -Dspring-boot.run.jvmArguments=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+
   frontend:
     build:
       context: ./frontend
@@ -49,7 +53,12 @@ services:
     depends_on:
       - backend
     ports:
-      - "80:80"
+      - "4200:4200"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
 
 volumes:
   mysql_data:

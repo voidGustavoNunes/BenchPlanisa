@@ -1,20 +1,19 @@
-<div class="min-h-screen bg-gray-50">
-  <app-menu-categories></app-menu-categories>
+<div class="min-h-screen bg-gray-100 flex flex-col">
+  <main class="container mx-auto px-6 py-6 flex flex-col gap-8">
+    <header class="text-center">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">Dashboard COVID-19 Brasil</h1>
+      <p class="text-gray-600 text-lg">
+        Monitoramento dos casos de COVID-19 no Brasil,
+        utilizando dados oficiais fornecidos pela API Brasil.io
+      </p>
+    </header>
 
-  <main class="container mx-auto px-4">
-    <router-outlet></router-outlet>
+    <app-bench-mark
+      (searchEvent)="onSearch($event)"
+      (benchmarkCreated)="onBenchmarkCreated($event)"
+      (benchmarkUpdated)="onBenchmarkUpdated($event)">
+    </app-bench-mark>
+
+    <app-grafico [benchmarkId]="benchmarkSelecionado"></app-grafico>
   </main>
-
-
-  <header class="text-center my-8">
-    <h1 class="text-3xl font-bold mb-4">Dashboard COVID-19 Brasil</h1>
-    <p class="text-gray-600">
-      Monitoramento em tempo real dos casos de COVID-19 no Brasil,
-      utilizando dados oficiais fornecidos pela API Brasil.io
-    </p>
-  </header>
-
-  <app-bench-mark (searchEvent)="onSearch($event)"></app-bench-mark>
-  <app-grafico [data]="chartData"></app-grafico>
-  <!-- importar tambem o resultado -->
 </div>

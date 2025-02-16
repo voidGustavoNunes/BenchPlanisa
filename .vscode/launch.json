@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug Spring Boot in Docker",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 5005,
+            "projectName": "BenchMarks"
+        }
+    ]
+}

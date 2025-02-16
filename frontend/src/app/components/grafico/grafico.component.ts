@@ -1,5 +1,9 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ID } from '@datorama/akita';
 import { ChartConfiguration } from 'chart.js';
+import { Comparacao } from 'src/app/modules/Comparacao';
+import { ComparacaoService } from 'src/app/service/ComparacaoService';
 
 @Component({
   selector: 'app-grafico',
@@ -7,24 +11,19 @@ import { ChartConfiguration } from 'chart.js';
   styleUrls: ['./grafico.component.scss']
 })
 export class GraficoComponent implements OnChanges {
-  @Input() data: any[] = [];
+  constructor(private http: HttpClient, private comparacaoService: ComparacaoService) {}
+
+  @Input() benchmarkId: ID | null = null;
+
+  metricaSelecionada: string = 'confirmados';
+  filtroDataInicial: string | null = null;
+  filtroDataFinal: string | null = null;
+
+  dadosCompletos: Comparacao[] = [];
 
   chartData: ChartConfiguration<'line'>['data'] = {
     labels: [],
-    datasets: [
-      {
-        data: [],
-        label: 'Casos - Localidade 1',
-        borderColor: 'rgb(59, 130, 246)',
-        tension: 0.1
-      },
-      {
-        data: [],
-        label: 'Casos - Localidade 2',
-        borderColor: 'rgb(239, 68, 68)',
-        tension: 0.1
-      }
-    ]
+    datasets: []
   };
 
   chartOptions: ChartConfiguration<'line'>['options'] = {
@@ -36,45 +35,121 @@ export class GraficoComponent implements OnChanges {
     scales: {
       y: {
         beginAtZero: true,
-        title: {
-          display: true,
-          text: 'Número de Casos'
-        }
+        title: { display: true, text: 'Número de Casos' }
       },
       x: {
-        title: {
-          display: true,
-          text: 'Data'
+        title: { display: true, text: 'Data' },
+        ticks: {
+          autoSkip: true,
+          maxTicksLimit: 10,
+          maxRotation: 45,
+          minRotation: 45
         }
       }
     }
   };
 
-  ngOnChanges() {
-    if (this.data.length) {
-      this.updateChartData();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['benchmarkId'] && this.benchmarkId) {
+      this.carregarDados();
     }
   }
 
-  private updateChartData() {
-    // Agrupa os dados por localidade
-    const location1Data = this.data.filter(d => d.localidade === this.data[0].localidade);
-    const location2Data = this.data.filter(d => d.localidade === this.data[this.data.length - 1].localidade);
+  private carregarDados() {
+    if (!this.benchmarkId) return;
 
-    // Atualiza as labels (datas)
-    this.chartData.labels = location1Data.map(d =>
-      new Date(d.data).toLocaleDateString('pt-BR')
-    );
-
-    // Atualiza os dados de casos para cada localidade
-    this.chartData.datasets[0].data = location1Data.map(d => d.casos);
-    this.chartData.datasets[0].label = `Casos - ${location1Data[0].localidade}`;
-
-    this.chartData.datasets[1].data = location2Data.map(d => d.casos);
-    this.chartData.datasets[1].label = `Casos - ${location2Data[0].localidade}`;
-
-    // Força a atualização do gráfico
-    this.chartData = { ...this.chartData };
+    this.comparacaoService.carregarDadosComparacao(this.benchmarkId).subscribe({
+      next: (dados) => {
+        this.dadosCompletos = dados;
+        this.aplicarFiltros();
+      },
+      error: (erro) => console.error('Erro ao carregar dados:', erro)
+    });
   }
 
+  aplicarFiltros() {
+    if (!this.dadosCompletos.length) return;
+
+    let dadosFiltrados = [...this.dadosCompletos];
+
+
+    if (this.filtroDataInicial) {
+      const dataInicial = new Date(this.filtroDataInicial);
+      dadosFiltrados = dadosFiltrados.filter(d => new Date(d.data) >= dataInicial);
+    }
+
+
+    if (this.filtroDataFinal) {
+      const dataFinal = new Date(this.filtroDataFinal);
+      dataFinal.setHours(23, 59, 59); 
+      dadosFiltrados = dadosFiltrados.filter(d => new Date(d.data) <= dataFinal);
+    }
+
+    this.atualizarGrafico(dadosFiltrados);
+  }
+
+  private atualizarGrafico(dados: Comparacao[]) {
+    if (!dados.length) return;
+
+    const labels = dados.map(d => new Date(d.data).toLocaleDateString('pt-BR'));
+
+    let valor1: number[] = [];
+    let valor2: number[] = [];
+    let labelMetrica = '';
+
+
+    switch (this.metricaSelecionada) {
+      case 'confirmados':
+        valor1 = dados.map(d => d.confirmados1);
+        valor2 = dados.map(d => d.confirmados2);
+        labelMetrica = 'Casos Confirmados';
+        this.atualizarEscalaY('Número de Casos');
+        break;
+      case 'mortes':
+        valor1 = dados.map(d => d.mortes1);
+        valor2 = dados.map(d => d.mortes2);
+        labelMetrica = 'Óbitos';
+        this.atualizarEscalaY('Número de Óbitos');
+        break;
+      case 'taxaLetalidade':
+        valor1 = dados.map(d => d.taxaLetalidade1);
+        valor2 = dados.map(d => d.taxaLetalidade2);
+        labelMetrica = 'Taxa de Letalidade (%)';
+        this.atualizarEscalaY('Taxa (%)');
+        break;
+      case 'casosPor100kHab':
+        valor1 = dados.map(d => d.casosPor100kHab1);
+        valor2 = dados.map(d => d.casosPor100kHab2);
+        labelMetrica = 'Casos por 100 mil hab.';
+        this.atualizarEscalaY('Casos por 100 mil hab.');
+        break;
+    }
+
+    this.chartData = {
+      labels,
+      datasets: [
+        {
+          data: valor1,
+          label: `${dados[0].identificadorLocalidade1} - ${labelMetrica}`,
+          borderColor: 'rgb(59, 130, 246)',
+          tension: 0.1
+        },
+        {
+          data: valor2,
+          label: `${dados[0].identificadorLocalidade2} - ${labelMetrica}`,
+          borderColor: 'rgb(239, 68, 68)',
+          tension: 0.1
+        }
+      ]
+    };
+  }
+
+  private atualizarEscalaY(texto: string) {
+    if (this.chartOptions?.scales?.['y']) {
+      this.chartOptions.scales['y'].title = {
+        display: true,
+        text: texto
+      };
+    }
+  }
 }

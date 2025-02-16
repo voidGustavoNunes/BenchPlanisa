@@ -1,8 +1,13 @@
-<div class="bg-white rounded-lg shadow-sm p-6">
-  <h2 class="text-xl font-semibold mb-4">Evolução de Casos</h2>
-  <canvas baseChart
-    [data]="chartData"
-    [options]="chartOptions"
-    [type]="'line'">
-  </canvas>
+<div class="bg-white shadow-md rounded-lg p-6">
+  <h2 class="text-xl font-semibold text-gray-800 mb-4 text-center">Evolução de Casos</h2>
+  <div class="mb-4">
+    <label for="metrica" class="block text-sm font-medium text-gray-700">Selecione a Métrica:</label>
+    <select id="metrica" [(ngModel)]="metricaSelecionada" (change)="aplicarFiltros()" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+      <option value="confirmados">Casos Confirmados</option>
+      <option value="mortes">Óbitos</option>
+      <option value="taxaLetalidade">Taxa de Letalidade</option>
+      <option value="casosPor100kHab">Casos por 100 mil hab.</option>
+    </select>
+  </div>
+  <canvas baseChart [data]="chartData" [options]="chartOptions" [type]="'line'"></canvas>
 </div>

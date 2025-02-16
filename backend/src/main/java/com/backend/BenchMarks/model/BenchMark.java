@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import com.backend.BenchMarks.model.dto.ComparacaoDTO;
 import com.backend.BenchMarks.model.enums.TipoLocalidade;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -13,8 +15,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -29,22 +29,23 @@ public class BenchMark {
     private Long id;
 
     @NotNull(message = "O campo nome não pode ser vazio.")
-    @Column(unique = true)
     private String nome;
 
-    @ManyToOne
-    @JoinColumn(name = "localidade1_id")
-    @NotNull(message = "O campo localidade 1 não pode ser vazio.")
-    private Localidade localidade1;
+    private String localidade1;
 
-    @ManyToOne
-    @JoinColumn(name = "localidade2_id")
-    @NotNull(message = "O campo localidade 2 não pode ser vazio.")
-    private Localidade localidade2;
+    private String localidade2;
 
+    @NotNull(message = "O campo estadoLocalidade2 não pode ser vazio.")
+    String estadoLocalidade1;
+
+    @NotNull(message = "O campo estadoLocalidade2 não pode ser vazio.")
+    String estadoLocalidade2;
+
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "O campo data inicial não pode ser vazio.")
     private LocalDate dataInicial;
     
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "O campo data final não pode ser vazio.")
     private LocalDate dataFinal;
 
@@ -52,7 +53,8 @@ public class BenchMark {
     @Enumerated(EnumType.STRING)
     TipoLocalidade tipoLocalidade;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "benchmark")
+    @JsonManagedReference
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "benchmark", orphanRemoval = true)
     private ComparacaoDTO comparacao;
 }
 

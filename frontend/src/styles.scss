@@ -1,1 +1,34 @@
 /* You can add global styles to this file, and also import other style files */
+:host {
+  display: block;
+  background-color: #f9fafb;
+}
+
+/* Navbar */
+.bg-white {
+  background-color: #ffffff;
+}
+
+nav {
+  border-radius: 8px;
+}
+
+/* Botões */
+button {
+  transition: all 0.2s ease-in-out;
+  
+}
+
+/* Inputs */
+input, select {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  width: 100%;
+}
+
+/* Erros de validação */
+.text-red-500 {
+  font-size: 0.875rem;
+  font-weight: 500;
+}

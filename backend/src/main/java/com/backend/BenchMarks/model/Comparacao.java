@@ -3,6 +3,7 @@ package com.backend.BenchMarks.model;
 import java.time.LocalDate;
 
 import com.backend.BenchMarks.model.dto.ComparacaoDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,7 +47,8 @@ public class Comparacao {
     private Double diferencaTaxaLetalidade;
     private Double diferencaCasosPor100kHab;
     
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "comparacao_dto_id", nullable = false)
+    @JoinColumn(name = "comparacao_dto_id")
     private ComparacaoDTO comparacao;
 }

@@ -1,108 +1,124 @@
-import { Component, OnInit} from '@angular/core';
-import { BenchMarkService } from '../../service/BenchMarkService';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { ID } from '@datorama/akita';
 import { TipoLocalidade } from 'src/app/modules/enum/TipoLocalidade';
-import { map, Observable, startWith, switchMap } from 'rxjs';
-import { Estado } from 'src/app/modules/Estado';
-import { Municipio } from 'src/app/modules/Municipio';
-import { LocalidadeService } from 'src/app/service/LocalidadeService';
+import { BenchMarkService } from 'src/app/service/BenchMarkService';
 
 @Component({
   selector: 'app-bench-mark',
   templateUrl: './bench-mark.component.html',
-  styleUrls: ['./bench-mark.component.scss']
+  styleUrls: ['./bench-mark.component.scss'],
 })
-export class BenchMarkComponent implements OnInit {
-
+export class BenchMarkComponent {
   benchmarkForm: FormGroup;
-  comparisonData: any[] = [];
   tipoLocalidade = TipoLocalidade;
-  filteredOptions$: Observable<(Estado | Municipio)[]> = new Observable();
+  benchmarkSelecionado: ID | null = null;
+
+  @Output() benchmarkCreated = new EventEmitter<ID>();
+  @Output() benchmarkUpdated = new EventEmitter<ID>();
+  @Output() searchEvent = new EventEmitter<{ benchmarkId: ID }>();
 
   constructor(
     private fb: FormBuilder,
     private benchmarkService: BenchMarkService,
     private snackBar: MatSnackBar,
-    private localidadeService: LocalidadeService
+    private router: Router
   ) {
     this.benchmarkForm = this.fb.group({
-      name: ['', Validators.required],
-      locationType: ['', Validators.required],
-      location1: ['', Validators.required],
-      location2: ['', Validators.required],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required]
+      nome: ['', Validators.required],
+      tipoLocalidade: ['', Validators.required],
+      estadoLocalidade1: ['', [Validators.required, Validators.maxLength(2), Validators.minLength(2)]],
+      localidade1: ['', Validators.required],
+      estadoLocalidade2: ['', [Validators.required, Validators.maxLength(2), Validators.minLength(2)]],
+      localidade2: ['', Validators.required],
+      dataInicial: ['', Validators.required],
+      dataFinal: ['', Validators.required],
     });
+
+    this.setupFormListeners();
+
+    const nav = this.router.getCurrentNavigation();
+    if (nav?.extras.state && nav.extras.state['benchmark']) {
+      this.preencherFormulario(nav.extras.state['benchmark']);
+    }
   }
-  
-  ngOnInit(): void {
-    this.filteredOptions$ = this.benchmarkForm.get('location1')!.valueChanges.pipe(
-      startWith(''),
-      switchMap(value => this.buscarLocalidades(value))
-    );
+
+  preencherFormulario(benchmark: any): void {
+    this.benchmarkForm.patchValue({
+      nome: benchmark.nome,
+      tipoLocalidade: benchmark.tipoLocalidade,
+      estadoLocalidade1: benchmark.estadoLocalidade1 || '',
+      localidade1: benchmark.localidade1 || '',
+      estadoLocalidade2: benchmark.estadoLocalidade2 || '',
+      localidade2: benchmark.localidade2 || '',
+      dataInicial: benchmark.dataInicial,
+      dataFinal: benchmark.dataFinal,
+    });
+    this.benchmarkSelecionado = benchmark.id;
+  }
+
+  private setupFormListeners() {
+    this.benchmarkForm.get('estadoLocalidade1')?.valueChanges.subscribe((value) => {
+      if (value) {
+        this.benchmarkForm.patchValue({ estadoLocalidade1: value.toUpperCase() }, { emitEvent: false });
+      }
+    });
+
+    this.benchmarkForm.get('estadoLocalidade2')?.valueChanges.subscribe((value) => {
+      if (value) {
+        this.benchmarkForm.patchValue({ estadoLocalidade2: value.toUpperCase() }, { emitEvent: false });
+      }
+    });
   }
 
   onSubmit() {
     if (this.benchmarkForm.valid) {
-      this.benchmarkService.create(this.benchmarkForm.value)
-        .subscribe({
-          next: (response: any) => {
-            this.snackBar.open('Benchmark criado com sucesso!', 'Fechar', {
-              duration: 3000
-            });
+      const formValue = this.benchmarkForm.value;
 
-            this.loadComparisonData();
+      console.log('Formulário', formValue);
+
+      if (this.benchmarkSelecionado) {
+        this.benchmarkService.update(this.benchmarkSelecionado, formValue).subscribe({
+          next: () => {
+            this.snackBar.open('Benchmark atualizado com sucesso!', 'Fechar', { duration: 3000 });
+            if (this.benchmarkSelecionado !== null) {
+              this.benchmarkUpdated.emit(this.benchmarkSelecionado);
+            }
           },
-          error: (error: any) => {
-            this.snackBar.open('Erro ao criar benchmark', 'Fechar', {
-              duration: 3000
-            });
-          }
+          error: (error) => {
+            if (error.error?.code === 'LOCALIDADE_NAO_ENCONTRADA') {
+              this.snackBar.open(error.error.message, 'Fechar', { duration: 5000 });
+            } else {
+              this.snackBar.open('Erro ao atualizar benchmark', 'Fechar', { duration: 3000 });
+            }
+          },
         });
+      } else {
+        this.benchmarkService.create(formValue).subscribe({
+          next: (response: any) => {
+            this.snackBar.open('Benchmark criado com sucesso!', 'Fechar', { duration: 3000 });
+            this.benchmarkSelecionado = response.id;
+            this.benchmarkCreated.emit(response.id);
+          },
+          error: (error) => {
+            if (error.error?.code === 'LOCALIDADE_NAO_ENCONTRADA') {
+              this.snackBar.open(error.error.message, 'Fechar', { duration: 5000 });
+            } else {
+              console.error('Erro ao enviar:', error);
+              this.snackBar.open('Erro ao criar benchmark', 'Fechar', { duration: 3000 });
+            }
+          },
+        });
+      }
+    } else {
+      console.warn('Formulário inválido:', this.benchmarkForm.value);
+      this.snackBar.open('Formulário inválido. Verifique os campos.', 'Fechar', { duration: 3000 });
     }
   }
 
   getTipoLocalidadeValues(): string[] {
     return Object.values(this.tipoLocalidade);
   }
-
-  private loadComparisonData() {
-    const formValue = this.benchmarkForm.value;
-
-    this.benchmarkService.compararLocalidades(
-      formValue.location1,
-      formValue.location2,
-      formValue.locationType,
-      formValue.startDate,
-      formValue.endDate
-    ).subscribe({
-      next: (data) => {
-        this.comparisonData = data;
-      },
-      error: (error) => {
-        this.snackBar.open('Erro ao carregar dados de comparação', 'Fechar', {
-          duration: 3000
-        });
-      }
-    });
-  }
-
-  buscarLocalidades(query: string): Observable<(Estado | Municipio)[]> {
-    if (!query || query.length < 2) return new Observable(obs => obs.next([]));
-
-    return this.benchmarkForm.get('locationType')!.value === 'Estado'
-      ? this.localidadeService.getEstados().pipe(
-          map(estados => estados.filter(e => e.sigla.toLowerCase().includes(query.toLowerCase())))
-        )
-      : this.localidadeService.getMunicipios().pipe(
-          map(municipios => municipios.filter(m => m.nome.toLowerCase().includes(query.toLowerCase())))
-        );
-  }
-
-  exibirNome(option: Estado | Municipio): string {
-    return 'sigla' in option ? option.sigla : option.nome;
-  }
-
-
 }

@@ -1,7 +1,34 @@
-:host {
-  display: block;
+$primary-color: #1A1A50;
+$secondary-color: #FFD700;
+$text-color: #EDEDED;
+$hover-color: #FFD700;
+
+.navbar {
+  background-color: $primary-color !important;
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .nav-link {
+    transition: all 0.3s ease-in-out;
+
+  &:hover {
+    color: $hover-color !important;
+    transform: scale(1.05);
+    }
+  }
+
+  .active {
+    color: $hover-color !important;
+    font-weight: bold;
+    border-bottom: 2px solid $hover-color;
+  }
 }
 
-.bg-navy-50 {
-  background-color: #f8f8ff;
+@media (max-width: 992px) {
+  .navbar-collapse {
+    background: rgba(19, 18, 58, 0.9);
+    padding: 10px;
+  }
 }

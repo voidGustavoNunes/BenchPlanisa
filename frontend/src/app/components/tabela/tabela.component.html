@@ -1,0 +1,61 @@
+<div class="container">
+  <h1 class="text-4xl font-bold text-gray-900 mb-2 text-center">Benchmarks Cadastradas</h1>
+
+  <!-- Indicador de carregamento -->
+  <div *ngIf="loading" class="text-center my-3">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Carregando...</span>
+    </div>
+  </div>
+
+  <table class="table table-striped" [class.table-loading]="loading">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Estado da Localidade 1</th>
+        <th>Localização 1</th>
+        <th>Estado da Localidade 2</th>
+        <th>Localização 2</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let benchMark of benchMarks">
+        <td>{{ benchMark.id }}</td>
+        <td>{{ benchMark.nome }}</td>
+        <td>{{ benchMark.estadoLocalidade1 }}</td>
+        <td>{{ benchMark.localidade1 || '-' }}</td>
+        <td>{{ benchMark.estadoLocalidade2 || '-' }}</td>
+        <td>{{ benchMark.localidade2 || '-' }}</td>
+        <td>
+          <div class="btn-group" role="group">
+            <button
+              class="btn btn-warning btn-sm"
+              (click)="atualizarBenchmark(benchMark)"
+              [disabled]="loading">
+              Atualizar
+            </button>
+            <button
+              class="btn btn-danger btn-sm ms-1"
+              (click)="excluirBenchmark(benchMark.id)"
+              [disabled]="loading">
+              Excluir
+            </button>
+            <button
+              class="btn btn-info btn-sm ms-1"
+              (click)="visualizarComparacao(benchMark.id)"
+              [disabled]="loading">
+              Visualizar Comparação
+            </button>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="benchMarks.length === 0 && !loading">
+        <td colspan="7" class="text-center">
+          Nenhum benchmark encontrado.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

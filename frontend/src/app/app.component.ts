@@ -1,6 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { LocalidadeService } from './service/LocalidadeService';
-import { AlertaService } from './components/base/alertaService';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',

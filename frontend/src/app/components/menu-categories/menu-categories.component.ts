@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu-categories',
@@ -6,13 +7,16 @@ import { Component } from '@angular/core';
   styleUrls: ['./menu-categories.component.scss']
 })
 export class MenuCategoriesComponent {
+
+  constructor(private router: Router) { }
+
   menuItems = [
     { name: 'Página Inicial', route: '/home' },
-    { name: 'Tabela de BenchMark', route: '/tabela' },
-    { name: 'Sobre', route: '/sobre' }
+    { name: 'BenchMarks Cadastradas', route: '/tabela' },
+    { name: 'Sobre o projeto', route: '/sobre' }
   ];
 
   selectCategory(category: string) {
-    console.log('Selected category:', category);
+    this.router.navigate([category]);
   }
 }

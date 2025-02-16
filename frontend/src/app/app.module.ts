@@ -18,13 +18,19 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCardModule } from '@angular/material/card';
-import { ResultadoComponent } from './components/resultado/resultado.component';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SobreComponent } from './components/sobre/sobre.component';
 import { AlertaComponent } from './components/base/alerta/alerta.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { RodapeComponent } from './components/rodape/rodape.component';
+import { BenchMarkService } from './service/BenchMarkService';
+import { ComparacaoService } from './service/ComparacaoService';
+import { RouterModule } from '@angular/router';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
   declarations: [
@@ -34,9 +40,9 @@ import { MatDialogModule } from '@angular/material/dialog';
     MenuCategoriesComponent,
     TabelaComponent,
     HomeComponent,
-    ResultadoComponent,
     SobreComponent,
-    AlertaComponent
+    AlertaComponent,
+    RodapeComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,8 +65,17 @@ import { MatDialogModule } from '@angular/material/dialog';
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
+    MatPaginatorModule,
+    MatSnackBarModule,
+    RouterModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
+    MatSelectModule,
   ],
-  providers: [],
+  providers: [
+    BenchMarkService,
+    ComparacaoService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

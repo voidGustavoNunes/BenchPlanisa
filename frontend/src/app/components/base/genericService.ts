@@ -9,7 +9,7 @@ import { AlertaComponent } from "./alerta/alerta.component";
 })
 export class GenericService<T, ID> {
 
-  protected baseUrl = "http://localhost:80";
+  protected baseUrl = "http://localhost:8080";
 
   constructor(protected httpClient: HttpClient) { }
 
@@ -22,6 +22,7 @@ export class GenericService<T, ID> {
   }
 
   create(entity: T): Observable<T> {
+    console.log('Enviando para o backend GENERIC SERVICE:', entity); // 🔍 Debug
     return this.httpClient.post<T>(this.baseUrl, entity);
   }
 

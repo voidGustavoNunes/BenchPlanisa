@@ -1,3 +1,35 @@
+.alerta-container {
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: auto;
+}
+
+.alerta-sucesso {
+  background-color: #d4edda; /* Verde claro */
+  color: #155724; /* Verde escuro */
+  border: 1px solid #c3e6cb;
+}
+
+.alerta-erro {
+  background-color: #f8d7da; /* Vermelho claro */
+  color: #721c24; /* Vermelho escuro */
+  border: 1px solid #f5c6cb;
+}
+
+.alerta-aviso {
+  background-color: #fff3cd; /* Amarelo claro */
+  color: #856404; /* Amarelo escuro */
+  border: 1px solid #ffeeba;
+}
+
+.alerta-info {
+  background-color: #d1ecf1; /* Azul claro */
+  color: #0c5460; /* Azul escuro */
+  border: 1px solid #bee5eb;
+}
+
 mat-dialog-content {
   font-size: 16px;
   padding: 10px 0;

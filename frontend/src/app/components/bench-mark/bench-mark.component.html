@@ -1,98 +1,88 @@
-<form [formGroup]="benchmarkForm" (ngSubmit)="onSubmit()" class="p-4">
+<form [formGroup]="benchmarkForm" (ngSubmit)="onSubmit()" class="bg-light shadow-lg rounded p-4">
   <div class="row g-3">
+    <!-- Nome do Benchmark -->
     <div class="col-md-6">
-      <label for="name" class="form-label">Nome do Benchmark</label>
-      <input
-        type="text"
-        class="form-control"
-        id="name"
-        formControlName="name"
-        placeholder="Digite o nome do benchmark"
-      />
-      <div *ngIf="benchmarkForm.get('name')?.invalid && benchmarkForm.get('name')?.touched" class="text-danger">
+      <label for="nome" class="form-label fw-semibold text-dark">Nome do Benchmark</label>
+      <input type="text" class="form-control" id="nome" formControlName="nome" placeholder="Digite o nome do benchmark">
+      <div *ngIf="benchmarkForm.get('nome')?.invalid && benchmarkForm.get('nome')?.touched" class="text-danger small">
         O nome do benchmark é obrigatório.
       </div>
     </div>
 
     <!-- Tipo de Localização -->
     <div class="col-md-6">
-      <label for="locationType" class="form-label">Tipo de Localização</label>
-      <select
-        class="form-select"
-        id="locationType"
-        formControlName="locationType"
-      >
+      <label for="tipoLocalidade" class="form-label fw-semibold text-dark">Tipo de Localização</label>
+      <select class="form-select" id="tipoLocalidade" formControlName="tipoLocalidade">
         <option value="">Selecione o tipo</option>
-        <option *ngFor="let tipo of getTipoLocalidadeValues()" [value]="tipo">
-          {{ tipo }}
-        </option>
+        <option *ngFor="let tipo of getTipoLocalidadeValues()" [value]="tipo">{{ tipo }}</option>
       </select>
-      <div *ngIf="benchmarkForm.get('locationType')?.invalid && benchmarkForm.get('locationType')?.touched" class="text-danger">
+      <div *ngIf="benchmarkForm.get('tipoLocalidade')?.invalid && benchmarkForm.get('tipoLocalidade')?.touched" class="text-danger small">
         O tipo de localização é obrigatório.
+      </div>
+    </div>
+
+    <!-- Sigla do Estado da Primeira Localidade -->
+    <div class="col-md-6">
+      <label for="estadoLocalidade1" class="form-label fw-semibold text-dark">Sigla do Estado da Primeira Localidade</label>
+      <input type="text" class="form-control" id="estadoLocalidade1" formControlName="estadoLocalidade1" placeholder="Digite a sigla do estado" maxlength="2">
+      <div *ngIf="benchmarkForm.get('estadoLocalidade1')?.invalid && benchmarkForm.get('estadoLocalidade1')?.touched" class="text-danger small">
+        <div *ngIf="benchmarkForm.get('estadoLocalidade1')?.errors?.['required']">A sigla do Estado é obrigatória.</div>
+        <div *ngIf="benchmarkForm.get('estadoLocalidade1')?.errors?.['minlength'] || benchmarkForm.get('estadoLocalidade1')?.errors?.['maxlength']">
+          A sigla deve ter exatamente 2 caracteres.
+        </div>
       </div>
     </div>
 
     <!-- Localização 1 -->
     <div class="col-md-6">
-      <label for="location1" class="form-label">Localização 1</label>
+      <label for="localidade1" class="form-label fw-semibold text-dark">Localização 1</label>
       <mat-form-field appearance="outline" class="w-100">
-        <input type="text" matInput formControlName="location1" [matAutocomplete]="auto1" placeholder="Digite a primeira localização">
-        <mat-autocomplete #auto1="matAutocomplete">
-          <mat-option *ngFor="let option of filteredOptions$ | async" [value]="exibirNome(option)">
-            {{ exibirNome(option) }}
-          </mat-option>
-        </mat-autocomplete>
+        <input matInput id="localidade1" formControlName="localidade1" placeholder="Digite a primeira localização">
       </mat-form-field>
+      <div *ngIf="benchmarkForm.get('localidade1')?.invalid && benchmarkForm.get('localidade1')?.touched" class="text-danger small">
+        A primeira localização é obrigatória.
+      </div>
     </div>
 
-    <!-- Localização 2 com Autocomplete -->
+    <!-- Sigla do Estado da Segunda Localidade -->
     <div class="col-md-6">
-      <label for="location2" class="form-label">Localização 2</label>
+      <label for="estadoLocalidade2" class="form-label fw-semibold text-dark">Sigla do Estado da Segunda Localidade</label>
+      <input type="text" class="form-control" id="estadoLocalidade2" formControlName="estadoLocalidade2" placeholder="Digite a sigla do estado" maxlength="2">
+      <div *ngIf="benchmarkForm.get('estadoLocalidade2')?.invalid && benchmarkForm.get('estadoLocalidade2')?.touched" class="text-danger small">
+        <div *ngIf="benchmarkForm.get('estadoLocalidade2')?.errors?.['required']">A sigla do Estado é obrigatória.</div>
+        <div *ngIf="benchmarkForm.get('estadoLocalidade2')?.errors?.['minlength'] || benchmarkForm.get('estadoLocalidade2')?.errors?.['maxlength']">
+          A sigla deve ter exatamente 2 caracteres.
+        </div>
+      </div>
+    </div>
+
+    <!-- Localização 2 -->
+    <div class="col-md-6">
+      <label for="localidade2" class="form-label fw-semibold text-dark">Localização 2</label>
       <mat-form-field appearance="outline" class="w-100">
-        <input type="text" matInput formControlName="location2" [matAutocomplete]="auto2" placeholder="Digite a segunda localização">
-        <mat-autocomplete #auto2="matAutocomplete">
-          <mat-option *ngFor="let option of filteredOptions$ | async" [value]="exibirNome(option)">
-            {{ exibirNome(option) }}
-          </mat-option>
-        </mat-autocomplete>
+        <input matInput id="localidade2" formControlName="localidade2" placeholder="Digite a segunda localização">
       </mat-form-field>
+      <div *ngIf="benchmarkForm.get('localidade2')?.invalid && benchmarkForm.get('localidade2')?.touched" class="text-danger small">
+        A segunda localização é obrigatória.
+      </div>
     </div>
 
     <!-- Data Inicial -->
     <div class="col-md-6">
-      <label for="startDate" class="form-label">Data Inicial</label>
-      <input
-        type="date"
-        class="form-control"
-        id="startDate"
-        formControlName="startDate"
-      />
-      <div *ngIf="benchmarkForm.get('startDate')?.invalid && benchmarkForm.get('startDate')?.touched" class="text-danger">
-        A data inicial é obrigatória.
-      </div>
+      <label for="dataInicial" class="form-label fw-semibold text-dark">Data Inicial</label>
+      <input type="date" class="form-control" id="dataInicial" formControlName="dataInicial">
     </div>
 
     <!-- Data Final -->
     <div class="col-md-6">
-      <label for="endDate" class="form-label">Data Final</label>
-      <input
-        type="date"
-        class="form-control"
-        id="endDate"
-        formControlName="endDate"
-      />
-      <div *ngIf="benchmarkForm.get('endDate')?.invalid && benchmarkForm.get('endDate')?.touched" class="text-danger">
-        A data final é obrigatória.
-      </div>
+      <label for="dataFinal" class="form-label fw-semibold text-dark">Data Final</label>
+      <input type="date" class="form-control" id="dataFinal" formControlName="dataFinal">
     </div>
   </div>
 
-  <!-- Botão de Envio -->
   <div class="d-flex justify-content-end mt-4">
-    <button type="submit" class="btn btn-primary" [disabled]="benchmarkForm.invalid">
-      Criar Benchmark
+    <button id="buttom" type="submit" class="btn btn-primary px-4 py-2 rounded">
+      {{ benchmarkSelecionado ? 'Atualizar' : 'Criar' }} Benchmark
     </button>
   </div>
 </form>
-
-<app-grafico [data]="comparisonData" *ngIf="comparisonData.length > 0"></app-grafico>
