@@ -203,7 +203,7 @@ GET /api/benchmark/all
 
 ## Licença
 
-Este projeto está licenciado sob a licença GNU.
+Este projeto está licenciado sob a licença GPL.
 
 ---
 
